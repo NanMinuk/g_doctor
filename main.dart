@@ -1,41 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:untitled/api.dart';
+import '/widgetsrc/answerscreen.dart';
+import '/widgetsrc/fullanswerscreen.dart';
+import '/widgetsrc/guideScreen.dart';
+import '/widgetsrc/whitebackground.dart';
+import 'api.dart';
+import 'helpDialog.dart';
+import 'widgetsrc/bluebackground.dart';
+import 'widgetsrc/baseOption.dart';
+import 'widgetsrc/helpIconButtion.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+
 
 
 void main() {
   runApp(const MyApp());
 }
-void _showHelpDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('도움말'),
-        content: const SingleChildScrollView(
-          child: ListBody(
-            children:  [
-              Text('1. 마이크 버튼을 클릭해주세요'),
-              Text('2. 스마트폰의 궁금한 기능을 말씀해주세요'),
-              Text('3. 지박사가 궁금한 내용을 답해줄 거에요'),
-              Text('4. 답변이 이해가 안 되시면 답변 다시듣기 버튼을 눌러주세요'),
-              Text('5. 추가로 질문하고 싶으면 질문 다시하기 버튼을 눌러주세요'),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('닫기'),
-          ),
-        ],
-      );
-    },
-  );
-}
-
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -108,121 +87,30 @@ class _FirstPageState extends State<FirstPage> {
 
     // Scaffold는 앱의 기본 구조를 제공합니다.
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 80.0, // 원하는 높이로 조절
-        title: Container(
-          margin: const EdgeInsets.only(top: 25),
-          child: const Text(
-            '지박사',
-            style: TextStyle(
-              fontFamily: 'Noto Sans',
-              color: Colors.white,
-              fontSize: 40,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.blue,
-      ),
+      appBar: homeAppBar(title: '지박사'),
 
       body: Stack(
         children: [
           // 파란색 네모 배경 (30%)
-          Positioned(
-            top: 0,
-            left: 0,
-            child: Container(
-              color: Colors.blue,
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.25, // 30%
-            ),
-          ),
+          const BlueBackgroundBox(),
           // 하얀색 네모(안내창) 배경 (60%부터 70%까지, 가로 길이는 40%부터 60%까지, 가로 기준으로 가운데 정렬)
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.4, // 50%
-            left: MediaQuery.of(context).size.width * 0.3 - MediaQuery.of(context).size.width * 0.4 / 2, // 가로 기준 가운데 정렬
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity((0.2)),
-                    spreadRadius: 2,
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              width: MediaQuery.of(context).size.width * 0.8, // 40%
-              height: MediaQuery.of(context).size.height * 0.05, // 10%
-              child: const Center(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Text(
-                      "클릭 후 말씀해주세요",
-                      style: TextStyle(
-                        color: Colors.black, // 텍스트 색상
-                        fontSize: 16, // 텍스트 크기
-                        fontWeight: FontWeight.bold, // 텍스트 굵기
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          GuideScreen(
+            text: "클릭 후 말씀해주세요",
+            textStyle: standardTextStyle(),
+            topPercentage: 0.4, // 화면 높이의 40% 위치에
+            alignX: 0.0,
           ),
           // 하얀색 네모(질문창) 배경 (20%부터 40%까지, 가로 길이는 40%부터 60%까지, 가로 기준으로 가운데 정렬)
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.1, // 20%
-            left: MediaQuery.of(context).size.width * 0.3 - MediaQuery.of(context).size.width * 0.4 / 2, // 가로 기준 가운데 정렬
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity((0.2)),
-                    spreadRadius: 2,
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              width: MediaQuery.of(context).size.width * 0.8, // 2배로 늘림 (40%)
-              height: MediaQuery.of(context).size.height * 0.2, // 40%
-            ),
-          ),
+          EmptyAnswerScreen(),
           // 하얀색 네모 배경 (70%)
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.7, // 70%
-            left: 0,
-            child: Container(
-              color: Colors.white,
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.3, // 30%
-            ),
-          ),
+          const WhiteBackgroundbox(),
           // 두 번째 페이지로 이동하는 버튼 추가
           // 마이크 버튼 추가
           Positioned(
             top: MediaQuery.of(context).size.height * 0.60,
             left: MediaQuery.of(context).size.width * 0.5 - 25,
             child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.blue, // 파란색 동그라미의 배경색
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    spreadRadius: 2,
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
+              decoration: MicBoxDecoration(),
               child: IconButton(
                 icon: const Icon(
                   Icons.mic,
@@ -241,35 +129,10 @@ class _FirstPageState extends State<FirstPage> {
             ),
           ),
           // 도움말 버튼 추가
-          Positioned(
-            top: 0,
-            right: 0,
-            child: IconButton(
-              onPressed: () {
-                // 도움말 창 열기
-                _showHelpDialog(context);
-              },
-              icon: Container(
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.indigo.withOpacity(0.5),
-                          spreadRadius: 2,
-                          blurRadius: 4,
-                          offset: const Offset(0, 2)
-                      )
-                    ]
-                ),
-                child:const Icon(
-                  Icons.help,
-                  color: Colors.white,
-                ),
-              ),
-              tooltip: '도움말',
-            ),
-          ),
-        ],
+          HelpIconButton(
+            onPressed: () => showHelpDialog(context),
+              )
+         ],
       ),
     );
   }
@@ -296,127 +159,17 @@ class _SecondPageState extends State<SecondPage> {
   Widget build(BuildContext context) {
     // 두 번째 페이지의 UI를 정의
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight:80.0,
-        title: Container(
-          margin: const EdgeInsets.only(top: 25),
-          child: const Text(
-            '지박사',
-            style: TextStyle(
-              fontFamily: 'Noto Sans',
-              color: Colors.white,
-              fontSize: 40,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.blue,
-        leading: Container(
-          margin: const EdgeInsets.only(top: 25),
-          child: IconButton(
-            onPressed: () {
-              _stopListening();
-              // 뒤로가기 기능
-              Navigator.pop(context);
-            },
-            icon: const Icon(
-              Icons.chevron_left,
-              color: Colors.white,
-              size: 40, // 아이콘의 크기
-            ),
-          ),
-        ),
-      ),
+      appBar: midAppBar(title: '지박사', context: context),
       body: Stack(
         children: [
           // 상단 30%까지 파란 박스
-          Positioned(
-            top: 0,
-            left: 0,
-            child: Container(
-              color: Colors.blue,
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.25, // 30%
-            ),
-          ),
+          BlueBackgroundBox(),
           // 하얀 박스(안내창)
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.4,
-            left: MediaQuery.of(context).size.width * 0.3 - MediaQuery.of(context).size.width * 0.4 / 2,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity((0.2)),
-                    spreadRadius: 2,
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              width: MediaQuery.of(context).size.width * 0.8,
-              height: MediaQuery.of(context).size.height * 0.05,
-              child: const Center(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Text(
-                      "듣는 중...",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          GuideScreen(text: '듣는 중....', textStyle: standardTextStyle()),
           // 하얀 박스(질문창)
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.1,
-            left: MediaQuery.of(context).size.width * 0.3 - MediaQuery.of(context).size.width * 0.4 / 2,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity((0.2)),
-                    spreadRadius: 2,
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              width: MediaQuery.of(context).size.width * 0.8,
-              height: MediaQuery.of(context).size.height * 0.2,
-              child: Center(
-                child: Text(
-                  widget.recognizedText,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ),
+          FullAnswerScreen(text: widget.recognizedText, textStyle: standardTextStyle()),
           //하얀박스 배경 부분
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.7,
-            left: 0,
-            child: Container(
-              color: Colors.white,
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.3,
-            ),
-          ),
+          WhiteBackgroundbox(),
           // 로딩창 버튼 추가
           Positioned.fill(
             top: MediaQuery.of(context).size.height * 0.4,
@@ -436,8 +189,8 @@ class _SecondPageState extends State<SecondPage> {
             MaterialPageRoute(builder: (context) => ThirdPage(recognizedText: widget.recognizedText)),
           );
         },
-        child: Icon(Icons.stop, color: Colors.white), // 아이콘 색상 변경 예시
-        backgroundColor: Colors.blue, // FloatingActionButton 배경색 변경 예시
+        child: Icon(Icons.stop, color: Colors.white),
+        backgroundColor: Colors.blue,
       ),
 
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat, // 위치 변경
@@ -475,127 +228,17 @@ class _ThirdPageState extends State<ThirdPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       //상단 바
-      appBar: AppBar(
-        toolbarHeight: 80.0,
-        title: Container(
-          margin: const EdgeInsets.only(top: 25),
-          child: const Text(
-            '지박사',
-            style: TextStyle(
-              fontFamily: 'Noto Sans',
-              color: Colors.white,
-              fontSize: 40,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.blue,
-        leading: Container(
-          margin: const EdgeInsets.only(top: 25),
-          child: IconButton(
-            onPressed: () {
-              // 뒤로가기 기능
-              Navigator.pop(context);
-            },
-            icon: const Icon(
-              Icons.chevron_left,
-              color: Colors.white,
-              size: 40, // 아이콘의 크기
-            ),
-          ),
-        ),
-      ),
+      appBar:midAppBar(title: '지박사', context: context),
       body: Stack(
         children: [
           //파란 배경 박스
-          Positioned(
-            top: 0,
-            left: 0,
-            child: Container(
-              color: Colors.blue,
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.25, // 30%
-            ),
-          ),
+          BlueBackgroundBox(),
           //하얀 박스 (안내창)
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.40,
-            left: MediaQuery.of(context).size.width * 0.3 - MediaQuery.of(context).size.width * 0.4 / 2,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity((0.2)),
-                    spreadRadius: 2,
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              width: MediaQuery.of(context).size.width * 0.8,
-              height: MediaQuery.of(context).size.height * 0.05,
-              child: const Center(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Text(
-                      "답변 생성중...",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          GuideScreen(text: '답변 생성중...', textStyle: standardTextStyle()),
           //하얀 박스(질문 창)
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.10,
-            left: MediaQuery.of(context).size.width * 0.3 - MediaQuery.of(context).size.width * 0.4 / 2,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity((0.2)),
-                    spreadRadius: 2,
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              width: MediaQuery.of(context).size.width * 0.8,
-              height: MediaQuery.of(context).size.height * 0.2,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Center(
-                child: Text(
-                  widget.recognizedText,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.7,
-            left: 0,
-            child: Container(
-              color: Colors.white,
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.3,
-            ),
-          ),
+          FullAnswerScreen(text: widget.recognizedText, textStyle: standardTextStyle()),
+          //하얀 배경 박스
+          WhiteBackgroundbox(),
           // 로딩창 버튼 추가
           Positioned.fill(
             top: MediaQuery.of(context).size.height * 0.4,
@@ -641,35 +284,11 @@ class _FourthPageState extends State<FourthPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       //상단 바
-      appBar: AppBar(
-        toolbarHeight: 80.0,
-        title: Container(
-          margin: const EdgeInsets.only(top: 25),
-          child: const Text(
-            '지박사',
-            style: TextStyle(
-              fontFamily: 'Noto Sans',
-              color: Colors.white,
-              fontSize: 40,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.blue,
-      ),
+      appBar: homeAppBar(title: '지박사'),
       body: Stack(
         children: [
           //파란 배경 박스
-          Positioned(
-            top: 0,
-            left: 0,
-            child: Container(
-              color: Colors.blue,
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.25, // 30%
-            ),
-          ),
+          BlueBackgroundBox(),
           //하얀 박스 (답변창)
           Positioned(
             top: MediaQuery.of(context).size.height * 0.35,
@@ -707,47 +326,9 @@ class _FourthPageState extends State<FourthPage> {
 
             ),
           ),
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.1,
-            left: MediaQuery.of(context).size.width * 0.3 - MediaQuery.of(context).size.width * 0.4 / 2,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity((0.2)),
-                    spreadRadius: 2,
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              width: MediaQuery.of(context).size.width * 0.8,
-              height: MediaQuery.of(context).size.height * 0.2,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Center(
-                child: Text(
-                  widget.recognizedText, // 'widget.'를 추가하여 수정
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.7,
-            left: 0,
-            child: Container(
-              color: Colors.white,
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.3,
-            ),
-          ),
+          FullAnswerScreen(text: widget.recognizedText, textStyle: standardTextStyle()),
+          //하얀 배경 박스
+          WhiteBackgroundbox(),
           // Refresh 아이콘 버튼 추가
           Positioned(
             top: MediaQuery.of(context).size.height * 0.7 - 30, // 80% 위치에서 30픽셀 위로
@@ -836,5 +417,4 @@ class _FourthPageState extends State<FourthPage> {
     );
   }
 }
-
 
