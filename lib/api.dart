@@ -2,9 +2,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 Future<String> getGPT3Response(String userInput) async {
-  String modelname = "text-davinci-003";
-  String apiKey = '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';
-  String apiUrl = 'https://api.openai.com/v1/engines/$modelname/completions';
+  String model = "gpt-4-turbo-preview"; // 모델명 업데이트
+  String apiKey = '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'; // 실제 API 키로 교체하세요
+  String apiUrl = 'https://api.openai.com/v1/chat/completions'; // 엔드포인트 변경
+
+  // 요청 시간 기록
+  var startTime = DateTime.now();
 
   var response = await http.post(
     Uri.parse(apiUrl),
@@ -12,36 +15,45 @@ Future<String> getGPT3Response(String userInput) async {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $apiKey',
     },
-    body: jsonEncode({'prompt': userInput, 'max_tokens': 1000, 'temperature': 0.5}),
+    body: jsonEncode({
+      'model': model,
+      'messages': [
+        {"role": "user", "content": userInput}
+      ],
+      'temperature': 0.7,
+    }),
   );
 
+  // 응답 완료 시간 기록
+  var endTime = DateTime.now();
+
+  //시간
+  var duration = endTime.difference(startTime);
+  print('Response time: ${duration.inMilliseconds} milliseconds');
+
+  print(response.body);
   if (response.statusCode == 200) {
-    var data = jsonDecode(utf8.decode(response.bodyBytes));
-    return data['choices'][0]['text'];
+
+    print('응답 헤더: ${response.headers}');
+
+    String? contentType = response.headers['content-type'];
+    print('Content-Type: $contentType');
+
+    var encoding = Encoding.getByName("utf-8") ?? utf8; // 기본적으로 UTF-8 사용
+
+    if (contentType != null) {
+      final charsetMatch = RegExp('charset=([\\w-]+)').firstMatch(contentType);
+      if (charsetMatch != null) {
+        final charset = charsetMatch.group(1);
+        encoding = Encoding.getByName(charset) ?? encoding;
+      }
+    }
+
+    var decodedResponse = encoding.decode(response.bodyBytes);
+    var data = jsonDecode(decodedResponse);
+    print(data['choices'][0]['message']['content']);
+    return data['choices'][0]['message']['content']; // 응답 구조에 맞게 접근
   } else {
-    throw Exception('Failed to load response');
+    throw Exception('Failed to load response: ${response.body}');
   }
 }
-
-// // 상태 관리 클래스
-// class MyWidget extends StatefulWidget {
-//   @override
-//   _MyWidgetState createState() => _MyWidgetState();
-// }
-//
-// class _MyWidgetState extends State<MyWidget> {
-//   String gptResponse = "GPT 답변"; // 초기값
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     fetchGPTResponse(); // API 호출
-//   }
-//
-//   void fetchGPTResponse() async {
-//     String userInput = "안녕 gpt, 너는 지박사라는 노인 도우미를 연기해야해. 질문에 친절하게 대답해줘. 어이 지박사, 내가 화면 확대하는 법을 모르겠어. 아들이 손가락으로 뭐 어떻게 하면 된다는데 알려줘";
-//     String response = await getGPT3Response(userInput);
-//     setState(() {
-//       gptResponse = response; // API 응답으로 상태 업데이트
-//     });
-//   }

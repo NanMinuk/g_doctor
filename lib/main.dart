@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:untitled/widgetsrc/answerscreen.dart';
-import 'package:untitled/widgetsrc/fullanswerscreen.dart';
-import 'package:untitled/widgetsrc/guideScreen.dart';
-import 'package:untitled/widgetsrc/whitebackground.dart';
+import '/widgetsrc/answerScreen.dart';
+import '/widgetsrc/fullanswerscreen.dart';
+import '/widgetsrc/guideScreen.dart';
+import '/widgetsrc/whiteBackground.dart';
+import 'widgetsrc/finalanswerScreen.dart';
 import 'api.dart';
 import 'helpDialog.dart';
-import 'widgetsrc/bluebackground.dart';
+import 'widgetsrc/blueBackground.dart';
 import 'widgetsrc/baseOption.dart';
-import 'widgetsrc/helpIconButtion.dart';
+import 'widgetsrc/helpIconButton.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 
@@ -131,8 +132,8 @@ class _FirstPageState extends State<FirstPage> {
           // 도움말 버튼 추가
           HelpIconButton(
             onPressed: () => showHelpDialog(context),
-              )
-         ],
+          )
+        ],
       ),
     );
   }
@@ -272,7 +273,7 @@ class _FourthPageState extends State<FourthPage> {
   }
 
   void fetchGPTResponse() async {
-    String userInput = "안녕 gpt, 너는 지박사라는 노인 도우미를 연기해야해. 질문에 친절하게 대답해줘. 지금 너에게 질문하는 사람은 스마트폰의 여러 기능에 대해 물어볼 노인이야 질문에 열심히 대답해줘. 대답은 스마트폰을 처음 쓰는 사람 도 알아들을 수 있을만큼 자세하게 절차 하나하나 구체적으로 부탁할께 . 본격적인 답변 앞에 간단한 인사말도 덧붙혀줘 그리고 답변은 절차별로 숫자 붙혀서 제시해줘 답변 별로 한줄에 한문장씩 나오게하는 것도 잊지 말고질문 : " + widget.recognizedText;
+    String userInput = "안녕 gpt, 너는 지박사라는 노인 도우미를 연기해야해. 질문에 친절하게 대답해줘. 지금 너에게 질문하는 사람은 안드로이드 기반 스마트폰의 여러 기능에 대해 물어볼 노인이야. 대답은 스마트폰을 처음 쓰는 사람도 알아들을 수 있을만큼 쉽고 간단 명료하게 부탁할께. 앞에 인사말은 생략해줘. 그리고 답변은 절차별로 숫자 붙혀서 제시해줘 간단하게! 답변 별로 한줄에 한문장씩 나오게하는 것도 잊지 말고 그리고 앱 아이콘 어떻게 생겼는지도 같이 설명해줘 질문 : " + widget.recognizedText;
     print(userInput);
     String response = await getGPT3Response(userInput);
     setState(() {
@@ -291,7 +292,7 @@ class _FourthPageState extends State<FourthPage> {
           BlueBackgroundBox(),
           //하얀 박스 (답변창)
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.35,
+            top: MediaQuery.of(context).size.height * 0.20,
             left: MediaQuery.of(context).size.width * 0.3 - MediaQuery.of(context).size.width * 0.4 / 2,
             child: Container(
               decoration: BoxDecoration(
@@ -307,7 +308,7 @@ class _FourthPageState extends State<FourthPage> {
                 ],
               ),
               width: MediaQuery.of(context).size.width * 0.8,
-              height: MediaQuery.of(context).size.height * 0.25,
+              height: MediaQuery.of(context).size.height * 0.4,
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16), // 좌우 마진 추가
                 child: SingleChildScrollView(
@@ -315,7 +316,7 @@ class _FourthPageState extends State<FourthPage> {
                     gptResponse,
                     style: const TextStyle(
                       color: Colors.black,
-                      fontSize: 16,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.justify, // 텍스트 정렬 조정
@@ -326,13 +327,13 @@ class _FourthPageState extends State<FourthPage> {
 
             ),
           ),
-          FullAnswerScreen(text: widget.recognizedText, textStyle: standardTextStyle()),
+          FinalAnswerScreen(text: widget.recognizedText, textStyle: standardTextStyle()),
           //하얀 배경 박스
           WhiteBackgroundbox(),
           // Refresh 아이콘 버튼 추가
           Positioned(
             top: MediaQuery.of(context).size.height * 0.7 - 30, // 80% 위치에서 30픽셀 위로
-            left: MediaQuery.of(context).size.width * 0.2, // 화면 가로 중앙에서 왼쪽으로 이동
+            left: MediaQuery.of(context).size.width * 0.3-60, // 화면 가로 중앙에서 왼쪽으로 이동
             child: Column(
               children: [
                 IconButton(
@@ -354,7 +355,7 @@ class _FourthPageState extends State<FourthPage> {
                   "답변 다시 듣기",
                   style: TextStyle(
                       color: Colors.black,
-                      fontSize: 15, // 원하는 크기로 조절
+                      fontSize: 20, // 원하는 크기로 조절
                       fontWeight: FontWeight.bold
                   ),
                 ),
@@ -364,7 +365,7 @@ class _FourthPageState extends State<FourthPage> {
           // 질문 다시하기 아이콘 추가
           Positioned(
             top: MediaQuery.of(context).size.height * 0.7 - 30,
-            left: MediaQuery.of(context).size.width * 0.8 - 80,
+            left: MediaQuery.of(context).size.width * 0.7- 60,
             child: Column(
               children: [
                 Container(
@@ -403,7 +404,7 @@ class _FourthPageState extends State<FourthPage> {
                     "질문 다시하기",
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 15,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -417,4 +418,3 @@ class _FourthPageState extends State<FourthPage> {
     );
   }
 }
-
