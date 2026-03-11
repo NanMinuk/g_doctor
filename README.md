@@ -1,7 +1,7 @@
 ## 노인의 스마트폰 사용 능력 향상을 위한 LLM 기반 앱 디자인
 Designing an LLM-based App to Improve Smartphone Usage Skills among Older Adults
 
-### 📋 Publication
+### Publication
 학회명: 한국HCI학회 (HCI Korea 2024)
 자료유형: 학술대회 발표 논문집 (Proceedings)
 저자: 김민욱, 정형구 (서울시립대학교)
